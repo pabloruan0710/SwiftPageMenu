@@ -11,7 +11,7 @@ import UIKit
 open class PageMenuController: UIViewController {
 
     /// SwiftPageMenu configurations
-    public let options: PageMenuOptions
+    public private(set) var options: PageMenuOptions
 
     /// PageMenuController data source.
     open weak var dataSource: PageMenuControllerDataSource? {
@@ -136,6 +136,15 @@ open class PageMenuController: UIViewController {
      */
     public func reloadPages() {
         self.reloadPages(reloadViewControllers: true)
+    }
+    
+    
+    /**
+    Update Menu item size, if need change dynamic size for menu, use this method
+     */
+    public func updateMenuItemSize(_ menuItemSize: PageMenuItemSize) {
+        self.options.menuItemSize = menuItemSize
+        self.tabView.updateOptions(options)
     }
 
     /**

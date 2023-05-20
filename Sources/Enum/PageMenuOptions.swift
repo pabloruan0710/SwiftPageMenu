@@ -78,7 +78,7 @@ public protocol PageMenuOptions {
 
     var font: UIFont { get }
 
-    var menuItemSize: PageMenuItemSize { get }
+    var menuItemSize: PageMenuItemSize { get set }
 
     var menuItemMargin: CGFloat { get }
 
@@ -118,9 +118,7 @@ extension PageMenuOptions {
 
 public struct DefaultPageMenuOption: PageMenuOptions {
 
-    public var menuItemSize: PageMenuItemSize {
-       return .sizeToFit(minWidth: 80, height: 30)
-    }
+    public var menuItemSize: PageMenuItemSize = .sizeToFit(minWidth: 80, height: 30)
 
     public var menuItemMargin: CGFloat {
         return 8
