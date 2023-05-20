@@ -372,6 +372,14 @@ extension TabMenuView {
             .compactMap { $0 as? TabMenuItemCell }
             .forEach { $0.isDecorationHidden = true }
     }
+    
+    /**
+     Update options for dynamic changes
+     */
+    public func updateOptions(_ options: PageMenuOptions) {
+        self.options = options
+        collectionView.reloadData()
+    }
 }
 
 
