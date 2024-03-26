@@ -78,6 +78,11 @@ open class PageMenuController: UIViewController {
     public var tabMenuView: UIView {
         return self.tabView
     }
+    
+    /// Instance off scrollView
+    public var scrollView: UIScrollView {
+        return self.pageViewController.scrollView
+    }
 
     /// Check options have infinite mode
     public var isInfinite: Bool {
