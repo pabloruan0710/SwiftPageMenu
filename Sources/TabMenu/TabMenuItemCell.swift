@@ -27,6 +27,25 @@ class TabMenuItemCell: UICollectionViewCell {
 
     var decorationView: UIView?
 
+    private func makeRoundRect(
+        _ options: any PageMenuOptions,
+        _ rectColor: UIColor,
+        _ cornerRadius: CGFloat,
+        _ borderWidth: CGFloat?,
+        _ borderColor: UIColor?
+    ) {
+        let rectView = RoundRectCursorView(frame: .zero)
+        rectView.setup(parent: self, isInfinite: true, options: options)
+        rectView.backgroundColor = rectColor
+        rectView.layer.cornerRadius = cornerRadius
+        if let borderWidth = borderWidth, let borderColor = borderColor {
+            rectView.layer.borderWidth = borderWidth
+            rectView.layer.borderColor = borderColor.cgColor
+        }
+        rectView.updateWidth(width: self.frame.width)
+        self.decorationView = rectView
+    }
+    
     var isDecorationHidden: Bool = true {
         didSet {
             guard let options = options, options.isInfinite else {
@@ -45,21 +64,12 @@ class TabMenuItemCell: UICollectionViewCell {
                     underlineView.updateWidth(width: self.frame.width)
                     self.decorationView = underlineView
                 case let .roundRect(rectColor, cornerRadius, _, borderWidth, borderColor):
-                    let rectView = RoundRectCursorView(frame: .zero)
-                    rectView.setup(parent: self, isInfinite: true, options: options)
-                    rectView.backgroundColor = rectColor
-                    rectView.layer.cornerRadius = cornerRadius
-                    if let borderWidth = borderWidth, let borderColor = borderColor {
-                        rectView.layer.borderWidth = borderWidth
-                        rectView.layer.borderColor = borderColor.cgColor
-                    }
-                    rectView.updateWidth(width: self.frame.width)
-                    self.decorationView = rectView
+                    makeRoundRect(options, rectColor, cornerRadius, borderWidth, borderColor)
                 }
             }
         }
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -135,10 +145,39 @@ extension TabMenuItemCell {
         guard let options = self.options else {
             return
         }
-
         self.itemLabel.textColor = UIColor.interpolate(
             from: options.menuTitleSelectedColor,
             to: options.menuTitleColor,
             with: progress)
+    }
+    
+    func showDecorator() {
+        if let options, let color = options.tabMenuUnselectedColor,
+           case let .roundRect(_, cornerRadius, _, borderWidth, borderColor) = options.menuCursor {
+            
+            makeRoundRect(options, color, cornerRadius, borderWidth, borderColor)
+        }
+    }
+    
+    func showDecorator(progress: CGFloat = 1.0) {
+        if let options,
+            let color = options.tabMenuUnselectedColor,
+            case let .roundRect(colorRect, _, _, _, _) = options.menuCursor {
+            if decorationView == nil { showDecorator() }
+            decorationView?.backgroundColor = UIColor.interpolate(from: colorRect,
+                                                                  to: color,
+                                                                  with: progress)
+        }
+    }
+    
+    func hideDecoratoration(progress: CGFloat = 1.0) {
+        if let options, 
+            let color = options.tabMenuUnselectedColor,
+            case let .roundRect(colorRect, _, _, _, _) = options.menuCursor {
+            decorationView?.backgroundColor = UIColor.interpolate(from: color,
+                                                                  to: colorRect,
+                                                                  with: progress)
+            //decorationView?.alpha = 0.5 - (progress/2)
+        }
     }
 }

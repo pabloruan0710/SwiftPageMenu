@@ -26,7 +26,6 @@ class RoundRectCursorView: UIView, TabMenuItemCursor {
 
     func setup(parent: UIView, isInfinite: Bool, options: PageMenuOptions) {
         self.translatesAutoresizingMaskIntoConstraints = false
-
         if isInfinite {
             self.layer.zPosition = -1
             parent.insertSubview(self, at: 0)

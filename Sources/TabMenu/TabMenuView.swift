@@ -47,8 +47,9 @@ class TabMenuView: UIView {
     fileprivate var currentBarViewWidth: CGFloat = 0.0
 
     fileprivate var cellForSize: TabMenuItemCell!
-
+    
     fileprivate var distance: CGFloat = 0
+    
 
     fileprivate var contentView: UIView = {
         let contentView = UIView()
@@ -148,7 +149,7 @@ extension TabMenuView {
      */
     func scrollCurrentBarView(_ index: Int, contentOffsetX: CGFloat, progress: CGFloat) {
         var nextIndex = isInfinite ? index + self.pageTabItemsCount : index
-
+        
         if self.isInfinite && index == 0 && (self.beforeIndex - self.pageTabItemsCount) == self.pageTabItemsCount - 1 {
             // Calculate the index at the time of transition to the first item from the last item of pageTabItems
             nextIndex = pageTabItemsCount * 2
@@ -161,7 +162,7 @@ extension TabMenuView {
         let nextIndexPath = IndexPath(item: nextIndex, section: 0)
 
         self.cursorView.isHidden = false
-
+        
         if let currentCell = collectionView.cellForItem(at: currentIndexPath) as? TabMenuItemCell, let nextCell = collectionView.cellForItem(at: nextIndexPath) as? TabMenuItemCell {
             // stop scroll forcedly
             self.collectionView.setContentOffset(self.collectionView.contentOffset, animated: false)
@@ -190,10 +191,14 @@ extension TabMenuView {
 
             if progress > 0 {
                 nextCell.highlightTitle(progress: progress)
+                nextCell.hideDecoratoration(progress: progress)
                 currentCell.unHighlightTitle(progress: progress)
+                currentCell.showDecorator(progress: progress)
             } else {
                 nextCell.highlightTitle(progress: -1 * progress)
+                nextCell.hideDecoratoration(progress: -1 * progress)
                 currentCell.unHighlightTitle(progress: -1 * progress)
+                currentCell.showDecorator(progress: -1 * progress)
             }
 
             let width = abs(progress) * (nextCell.frame.width - currentCell.frame.width)
@@ -220,6 +225,7 @@ extension TabMenuView {
             }
 
             self.cursorView.updateWidth(width: self.currentBarViewWidth + width)
+            
         } else {
 
             // hidden visible decorations
@@ -297,7 +303,7 @@ extension TabMenuView {
      */
     fileprivate func moveCurrentBarView(_ indexPath: IndexPath, animated: Bool, shouldScroll: Bool) {
         var targetIndexPath = indexPath
-
+        self.hiddenVisibleDecorations()
         self.distance = 0
 
         if shouldScroll {
@@ -339,6 +345,7 @@ extension TabMenuView {
         }
 
         self.beforeIndex = self.currentIndex
+        self.collectionView.reloadData()
     }
 
     /**
@@ -370,7 +377,9 @@ extension TabMenuView {
         self.collectionView
             .visibleCells
             .compactMap { $0 as? TabMenuItemCell }
-            .forEach { $0.isDecorationHidden = true }
+            .forEach {
+                $0.isDecorationHidden = true
+            }
     }
     
     /**
@@ -408,6 +417,7 @@ extension TabMenuView: UICollectionViewDataSource {
         } else {
             cell.unHighlightTitle()
             cell.isDecorationHidden = true
+            cell.showDecorator()
         }
     }
 

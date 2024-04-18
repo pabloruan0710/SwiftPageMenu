@@ -130,8 +130,11 @@ open class PageMenuController: UIViewController {
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         self.tabView.layouted = true
+        if let currentIndex = self.currentIndex {
+           self.tabView.updateCurrentIndex(currentIndex, shouldScroll: true)
+        }
     }
 
     /**
@@ -149,6 +152,13 @@ open class PageMenuController: UIViewController {
      */
     public func updateMenuItemSize(_ menuItemSize: PageMenuItemSize) {
         self.options.menuItemSize = menuItemSize
+        self.tabView.updateOptions(options)
+    }
+    /**
+     Reload menu tabs
+     */
+    public func reloadMenu() {
+        self.reloadPages(reloadViewControllers: false)
         self.tabView.updateOptions(options)
     }
 
@@ -278,29 +288,29 @@ open class PageMenuController: UIViewController {
 
             // setup page view controller layout
             self.pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-            self.pageViewController.view.topAnchor.constraint(equalTo: self.tabView.bottomAnchor).isActive = true
+            self.pageViewController.view.topAnchor.constraint(equalTo: self.tabView.bottomAnchor, constant: options.menuInset.bottom).isActive = true
             self.pageViewController.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
             self.pageViewController.view.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
 
             // setup tab view layout
             self.tabView.translatesAutoresizingMaskIntoConstraints = false
             self.tabView.heightAnchor.constraint(equalToConstant: options.menuItemSize.height).isActive = true
-            self.tabView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-            self.tabView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+            self.tabView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: options.menuInset.left).isActive = true
+            self.tabView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: options.menuInset.right).isActive = true
 
             // use layout guide or edge
             switch self.options.layout {
             case .layoutGuide:
                 if #available(iOS 11.0, *) {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-                    self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+                    self.tabView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: options.menuInset.top).isActive = true
                 } else {
                     self.pageViewController.view.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.bottomAnchor).isActive = true
-                    self.tabView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+                    self.tabView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor, constant: options.menuInset.bottom).isActive = true
                 }
             case .edge:
                 self.pageViewController.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-                self.tabView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+                self.tabView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: options.menuInset.top).isActive = true
             }
         case .bottom:
             // add tab view
@@ -310,27 +320,27 @@ open class PageMenuController: UIViewController {
             self.pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
             self.pageViewController.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
             self.pageViewController.view.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-            self.pageViewController.view.bottomAnchor.constraint(equalTo: self.tabView.topAnchor).isActive = true
+            self.pageViewController.view.bottomAnchor.constraint(equalTo: self.tabView.topAnchor, constant: options.menuInset.top).isActive = true
 
             // setup tab view layout
             self.tabView.translatesAutoresizingMaskIntoConstraints = false
             self.tabView.heightAnchor.constraint(equalToConstant: options.menuItemSize.height).isActive = true
-            self.tabView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-            self.tabView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+            self.tabView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: options.menuInset.left).isActive = true
+            self.tabView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: options.menuInset.right).isActive = true
 
             // use layout guide or edge
             switch self.options.layout {
             case .layoutGuide:
                 if #available(iOS 11.0, *) {
                     self.pageViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
-                    self.tabView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+                    self.tabView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: options.menuInset.bottom).isActive = true
                 } else {
                     self.pageViewController.view.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
-                    self.tabView.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor).isActive = true
+                    self.tabView.bottomAnchor.constraint(equalTo: self.bottomLayoutGuide.topAnchor, constant: options.menuInset.bottom).isActive = true
                 }
             case .edge:
                 self.pageViewController.view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-                self.tabView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+                self.tabView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: options.menuInset.bottom).isActive = true
             }
         case .custom:
 

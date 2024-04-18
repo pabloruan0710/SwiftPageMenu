@@ -92,9 +92,13 @@ public protocol PageMenuOptions {
 
     var tabMenuPosition: TabMenuPosition { get }
 
-    var tabMenuContentInset: UIEdgeInsets { get }
+    var tabMenuContentInset: UIEdgeInsets { get set }
 
     var layout: PageMenuLayout { get }
+    
+    var tabMenuUnselectedColor: UIColor? { get }
+    
+    var menuInset: UIEdgeInsets { get set }
 }
 
 extension PageMenuOptions {
@@ -105,10 +109,6 @@ extension PageMenuOptions {
 
     public var tabMenuPosition: TabMenuPosition {
         return .top
-    }
-
-    public var tabMenuContentInset: UIEdgeInsets {
-        return .zero
     }
 
     public var layout: PageMenuLayout {
@@ -143,6 +143,14 @@ public struct DefaultPageMenuOption: PageMenuOptions {
     public var tabMenuBackgroundColor: UIColor {
         return .white
     }
+    
+    public var tabMenuUnselectedColor: UIColor? {
+        return nil
+    }
+    
+    public var menuInset: UIEdgeInsets = .zero
+    
+    public var tabMenuContentInset: UIEdgeInsets = .zero
 
     public init() {}
 }
